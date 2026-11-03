@@ -1,4 +1,4 @@
-# Coin Quest
+# Jump High
 
 A 3D mobile platformer made in Unity 6 for Game Development Fundamentals (Narxoz University).
 Run across floating platforms, collect every coin to open the door, survive three levels and beat the boss.

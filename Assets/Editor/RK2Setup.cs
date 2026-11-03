@@ -12,7 +12,7 @@ using TMPro;
 public static class RK2Setup
 {
     const string S = "Assets/Scenes/";
-    const string GameName = "COIN QUEST";
+    const string GameName = "JUMP HIGH";
 
     static readonly Color Panel = new Color(0.07f, 0.09f, 0.16f, 0.78f);
     static readonly Color Accent = new Color(1f, 0.55f, 0.1f, 1f);
@@ -40,7 +40,7 @@ public static class RK2Setup
 
         VersionControlSettings.mode = "Visible Meta Files";
         EditorSettings.serializationMode = SerializationMode.ForceText;
-        PlayerSettings.productName = "Coin Quest";
+        PlayerSettings.productName = "Jump High";
         PlayerSettings.defaultInterfaceOrientation = UIOrientation.AutoRotation;
         PlayerSettings.allowedAutorotateToPortrait = false;
         PlayerSettings.allowedAutorotateToPortraitUpsideDown = false;
