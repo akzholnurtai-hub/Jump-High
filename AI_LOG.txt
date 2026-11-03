@@ -1,0 +1,10 @@
+
+During Assignment 8-9, I used Claude Code to help me with some difficult parts of my game. First, I asked for help with the GDD structure. It showed me how to organize the sections, and I shortened the text and adapted it to my game.
+
+Second, I asked how to arrange the HUD on a phone screen. I got advice about hearts, coins, the timer and control buttons. I placed the buttons myself and tested them.
+
+Third, I got advice on how to upload my Unity project to GitHub. I created the repository and uploaded the project myself.
+
+Fourth, I asked for help with the Pause Menu and Safe Area. Claude Code provided the necessary scripts, and I connected the buttons and tested them myself.
+
+Finally, I asked for help with Level 1 and Level 2. I got ideas for new islands, bridges and moving obstacles. I chose the versions I liked and adapted them to my game.
