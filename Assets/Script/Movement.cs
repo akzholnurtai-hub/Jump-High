@@ -104,8 +104,16 @@ public class Movement : MonoBehaviour
             bool pointerOnUI = EventSystem.current != null
                                && EventSystem.current.IsPointerOverGameObject();
 
-            if ((fromFireButton || !pointerOnUI) && shooter != null)
-                shooter.Shoot(transform.forward);
+            if ((fromFireButton || !pointerOnUI || Cursor.lockState == CursorLockMode.Locked) && shooter != null)
+            {
+                // shoot where the camera looks, and turn the player that way
+                Vector3 aim = cam.forward; aim.y = 0f;
+                if (aim.sqrMagnitude < 0.01f) aim = transform.forward;
+                aim.Normalize();
+                transform.rotation = Quaternion.LookRotation(aim);
+                rb.rotation = transform.rotation;
+                shooter.Shoot(aim);
+            }
         }
 
         timeLeft -= Time.deltaTime;

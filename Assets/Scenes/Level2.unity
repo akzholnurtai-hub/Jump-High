@@ -2224,6 +2224,15 @@ MonoBehaviour:
   target: {fileID: 1815715583}
   offset: {x: 0, y: 4, z: -7}
   smooth: 10
+  mouseSensitivity: 0.12
+  touchSensitivity: 0.2
+  invertY: 0
+  minPitch: -5
+  maxPitch: 65
+  lockCursor: 1
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!1 &339869976
 GameObject:
   m_ObjectHideFlags: 0
@@ -8413,8 +8422,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 40, y: 0}
-  m_SizeDelta: {x: -120.00012, y: 0}
+  m_AnchoredPosition: {x: 39.99997, y: 0}
+  m_SizeDelta: {x: -120.00006, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1249834640
 GameObject:
@@ -9114,13 +9123,13 @@ RectTransform:
   - {fileID: 1790495423}
   - {fileID: 1619943135}
   - {fileID: 165846264}
-  - {fileID: 648435389}
-  - {fileID: 624944249}
-  - {fileID: 640134880}
   - {fileID: 1795710641}
   - {fileID: 534605311}
   - {fileID: 1554744944}
   - {fileID: 888349341}
+  - {fileID: 648435389}
+  - {fileID: 624944249}
+  - {fileID: 640134880}
   m_Father: {fileID: 928102782}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -11598,9 +11607,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7a468c29d76d1c4385ab446c33f1bee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Shooter
-  bulletPrefab: {fileID: 497665399704149797, guid: 4426204eff5df924999396adc74997e8, type: 3}
-  cooldown: 0.3
+  bulletPrefab: {fileID: 7010253257147588603, guid: 71a1e31d719d55f4d99c5e45eff2fbf9, type: 3}
+  cooldown: 0.35
   shootClip: {fileID: 8300000, guid: c86bcedfb25941240826499c5e5b76eb, type: 3}
+  pattern: 1
+  spreadCount: 3
+  spreadAngle: 12
+  burstCount: 3
+  burstDelay: 0.08
 --- !u!114 &1815715592
 MonoBehaviour:
   m_ObjectHideFlags: 0
