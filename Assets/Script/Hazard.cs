@@ -1,15 +1,21 @@
 using UnityEngine;
 
+// Anything that hurts the player on touch. A plain Hazard is a trap in the level
+// (spikes, moving blocks, spin bars): trap damage, never disappears.
+// Rock / Heart / BombHazard / Fireball change Damage and LifeTime - the numbers are in ItemValues.
 public class Hazard : MonoBehaviour
 {
-    public int damage = 1;
     public bool destroyOnHit = true;
-    public float lifeTime = 15f;
+
+    protected static ItemValues Items => GameConfig.Get().items;
+
+    protected virtual int Damage => Items.trapDamage;
+    protected virtual float LifeTime => 0f;          // 0 = stays in the level
 
     protected virtual void Start()
     {
-        if (lifeTime > 0f)
-            Destroy(gameObject, lifeTime);
+        if (LifeTime > 0f)
+            Destroy(gameObject, LifeTime);
     }
 
     protected virtual void OnCollisionEnter(Collision c)
@@ -44,6 +50,6 @@ public class Hazard : MonoBehaviour
 
     protected virtual void OnHitPlayer(Health player)
     {
-        player.TakeDamage(damage);
+        player.TakeDamage(Damage);
     }
 }

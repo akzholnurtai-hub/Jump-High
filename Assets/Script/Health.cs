@@ -2,22 +2,26 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+// Max HP and the blink time come from PlayerStats, the death height from LevelData.
 public class Health : MonoBehaviour
 {
-    public int maxHp = 3;
-    public int hp = 3;
+    public int hp;                       // current HP (HUDFx watches it)
+    public int MaxHp => P.maxHp;
+
+    static PlayerStats P => GameConfig.Get().player;
 
     public AudioClip hurtClip;
     public AudioClip healClip;
 
     bool invincible;
+    bool dead;
     Renderer[] renderers;
     AudioSource src;
     HUD hud;
 
     void Start()
     {
-        hp = maxHp;
+        hp = MaxHp;
 
         renderers = GetComponentsInChildren<Renderer>();
         src = GetComponent<AudioSource>();
@@ -30,7 +34,8 @@ public class Health : MonoBehaviour
 
     void Update()
     {
-        if (transform.position.y < -10f)
+        LevelData level = LevelRunner.CurrentLevel;
+        if (level != null && transform.position.y < level.killHeight)
             GameOver();
     }
 
@@ -55,7 +60,7 @@ public class Health : MonoBehaviour
 
     public void Heal(int amount)
     {
-        hp = Mathf.Min(hp + amount, maxHp);
+        hp = Mathf.Min(hp + amount, MaxHp);
         Debug.Log("HEAL! HP: " + hp);
         if (src != null && healClip != null) src.PlayOneShot(healClip);
 
@@ -65,10 +70,15 @@ public class Health : MonoBehaviour
     IEnumerator Invincibility()
     {
         invincible = true;
-        for (int i = 0; i < 10; i++)
+        bool visible = true;
+        float t = 0f;
+        while (t < P.invincibleTime)
         {
-            SetVisible(i % 2 == 1);
-            yield return new WaitForSeconds(0.2f);
+            visible = !visible;
+            SetVisible(visible);
+            float step = P.blinkInterval > 0f ? P.blinkInterval : P.invincibleTime;   // no endless loop on a 0
+            yield return new WaitForSeconds(step);
+            t += step;
         }
         SetVisible(true);
         invincible = false;
@@ -82,7 +92,10 @@ public class Health : MonoBehaviour
 
     void GameOver()
     {
+        if (dead) return;               // count one death, not one per frame
+        dead = true;
         Debug.Log("GAME OVER");
+        SaveSystem.AddDeath();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

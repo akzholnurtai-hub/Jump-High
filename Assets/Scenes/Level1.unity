@@ -167,9 +167,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce6a1f8b911937e4394dadb42f66c9dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hazard
-  damage: 1
   destroyOnHit: 0
-  lifeTime: 0
 --- !u!95 &3164403
 Animator:
   serializedVersion: 7
@@ -446,9 +444,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce6a1f8b911937e4394dadb42f66c9dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hazard
-  damage: 1
   destroyOnHit: 0
-  lifeTime: 0
 --- !u!95 &72733009
 Animator:
   serializedVersion: 7
@@ -549,6 +545,51 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 72733005}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &79920203
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 79920205}
+  - component: {fileID: 79920204}
+  m_Layer: 0
+  m_Name: LevelRunner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &79920204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 79920203}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8fc8e7283484a57834809156f2d35a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LevelRunner
+  level: {fileID: 11400000, guid: dced0bbe244a4580b44179d6977c8a00, type: 2}
+--- !u!4 &79920205
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 79920203}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &100211706
 GameObject:
   m_ObjectHideFlags: 0
@@ -1146,9 +1187,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce6a1f8b911937e4394dadb42f66c9dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hazard
-  damage: 1
   destroyOnHit: 0
-  lifeTime: 0
 --- !u!95 &132761272
 Animator:
   serializedVersion: 7
@@ -2360,6 +2399,15 @@ MonoBehaviour:
   target: {fileID: 1815715583}
   offset: {x: 0, y: 4, z: -7}
   smooth: 10
+  mouseSensitivity: 0.12
+  touchSensitivity: 0.2
+  invertY: 0
+  minPitch: -5
+  maxPitch: 65
+  lockCursor: 1
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!1 &339869976
 GameObject:
   m_ObjectHideFlags: 0
@@ -3122,9 +3170,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce6a1f8b911937e4394dadb42f66c9dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hazard
-  damage: 1
   destroyOnHit: 0
-  lifeTime: 0
 --- !u!95 &483841902
 Animator:
   serializedVersion: 7
@@ -4136,9 +4182,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce6a1f8b911937e4394dadb42f66c9dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hazard
-  damage: 1
   destroyOnHit: 0
-  lifeTime: 0
 --- !u!95 &669093794
 Animator:
   serializedVersion: 7
@@ -4308,9 +4352,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce6a1f8b911937e4394dadb42f66c9dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hazard
-  damage: 1
   destroyOnHit: 0
-  lifeTime: 0
 --- !u!95 &722510615
 Animator:
   serializedVersion: 7
@@ -4459,9 +4501,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce6a1f8b911937e4394dadb42f66c9dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hazard
-  damage: 1
   destroyOnHit: 0
-  lifeTime: 0
 --- !u!95 &730586331
 Animator:
   serializedVersion: 7
@@ -4710,9 +4750,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce6a1f8b911937e4394dadb42f66c9dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hazard
-  damage: 1
   destroyOnHit: 0
-  lifeTime: 0
 --- !u!1 &739893595
 GameObject:
   m_ObjectHideFlags: 0
@@ -4761,9 +4799,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce6a1f8b911937e4394dadb42f66c9dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hazard
-  damage: 1
   destroyOnHit: 0
-  lifeTime: 0
 --- !u!95 &739893598
 Animator:
   serializedVersion: 7
@@ -5024,9 +5060,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce6a1f8b911937e4394dadb42f66c9dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hazard
-  damage: 1
   destroyOnHit: 0
-  lifeTime: 0
 --- !u!95 &756852197
 Animator:
   serializedVersion: 7
@@ -5303,9 +5337,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce6a1f8b911937e4394dadb42f66c9dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hazard
-  damage: 1
   destroyOnHit: 0
-  lifeTime: 0
 --- !u!95 &781614606
 Animator:
   serializedVersion: 7
@@ -5691,9 +5723,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce6a1f8b911937e4394dadb42f66c9dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hazard
-  damage: 1
   destroyOnHit: 0
-  lifeTime: 0
 --- !u!1 &812139949
 GameObject:
   m_ObjectHideFlags: 0
@@ -6739,11 +6769,6 @@ MonoBehaviour:
   - {fileID: 8554683089158018931, guid: bad170e3383b898448ba0d1770abbdb2, type: 3}
   - {fileID: 2917296432366333505, guid: c2d92e41b15a40040acd664ad1b49d2f, type: 3}
   - {fileID: -230264910066772484, guid: 375131695c99ec548a1e64b57034c7c8, type: 3}
-  firstDelay: 1
-  interval: 2
-  rangeX: 8
-  rangeZ: 8
-  spawnHeight: 6
 --- !u!1 &958960716
 GameObject:
   m_ObjectHideFlags: 0
@@ -7880,8 +7905,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 40, y: 0}
-  m_SizeDelta: {x: -120.00012, y: 0}
+  m_AnchoredPosition: {x: 39.99997, y: 0}
+  m_SizeDelta: {x: -120.00006, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1292642118
 GameObject:
@@ -8550,13 +8575,13 @@ RectTransform:
   - {fileID: 1790495423}
   - {fileID: 1619943135}
   - {fileID: 165846264}
-  - {fileID: 648435389}
-  - {fileID: 624944249}
-  - {fileID: 640134880}
   - {fileID: 1795710641}
   - {fileID: 534605311}
   - {fileID: 1554744944}
   - {fileID: 888349341}
+  - {fileID: 648435389}
+  - {fileID: 624944249}
+  - {fileID: 640134880}
   m_Father: {fileID: 928102782}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -8873,9 +8898,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce6a1f8b911937e4394dadb42f66c9dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hazard
-  damage: 1
   destroyOnHit: 0
-  lifeTime: 0
 --- !u!1 &1471949261
 GameObject:
   m_ObjectHideFlags: 0
@@ -9688,9 +9711,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce6a1f8b911937e4394dadb42f66c9dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hazard
-  damage: 1
   destroyOnHit: 0
-  lifeTime: 0
 --- !u!95 &1625331132
 Animator:
   serializedVersion: 7
@@ -10046,9 +10067,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce6a1f8b911937e4394dadb42f66c9dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hazard
-  damage: 1
   destroyOnHit: 0
-  lifeTime: 0
 --- !u!95 &1696180418
 Animator:
   serializedVersion: 7
@@ -10461,18 +10480,13 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   anim: {fileID: 1591847617}
-  speed: 6
-  jumpForce: 7
-  turnSpeed: 12
   gateAnimator: {fileID: 1043745336}
-  timeLimit: 60
   coinText: {fileID: 1232970731}
   winText: {fileID: 1907851026}
   timerText: {fileID: 1903941910}
   audioSource: {fileID: 1815715587}
   coinSound: {fileID: 8300000, guid: 26d3294f17f510449925844c8fb90abd, type: 3}
   messageTime: 3
-  nextScene: Level2
   jumpSound: {fileID: 8300000, guid: b17296b5a3f5f8d4cbc10d770157bcf8, type: 3}
 --- !u!54 &1815715585
 Rigidbody:
@@ -10724,7 +10738,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e08b7505ef622d745a43da81c978abe2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
-  maxHp: 3
   hp: 3
   hurtClip: {fileID: 8300000, guid: 14d49a9d592359f4e8995bd432716e70, type: 3}
   healClip: {fileID: 8300000, guid: 52153e231eb1e3e438d5dbc70a99dd7e, type: 3}
@@ -10740,8 +10753,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7a468c29d76d1c4385ab446c33f1bee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Shooter
-  bulletPrefab: {fileID: 497665399704149797, guid: 4426204eff5df924999396adc74997e8, type: 3}
-  cooldown: 0.3
+  bulletPrefab: {fileID: 7010253257147588603, guid: 71a1e31d719d55f4d99c5e45eff2fbf9, type: 3}
   shootClip: {fileID: 8300000, guid: c86bcedfb25941240826499c5e5b76eb, type: 3}
 --- !u!114 &1815715592
 MonoBehaviour:
@@ -12593,9 +12605,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce6a1f8b911937e4394dadb42f66c9dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hazard
-  damage: 1
   destroyOnHit: 0
-  lifeTime: 0
 --- !u!1 &2098975105
 GameObject:
   m_ObjectHideFlags: 0
@@ -12776,9 +12786,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce6a1f8b911937e4394dadb42f66c9dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hazard
-  damage: 1
   destroyOnHit: 0
-  lifeTime: 0
 --- !u!1 &2137944346
 GameObject:
   m_ObjectHideFlags: 0
@@ -12914,9 +12922,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5233c50716b7a2948acd70d5eac057be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Rock
-  damage: 1
   destroyOnHit: 1
-  lifeTime: 15
 --- !u!1001 &5491401082418877129
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12990,9 +12996,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 008e534de73b4d84fad85536789600d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Heart
-  damage: 1
   destroyOnHit: 1
-  lifeTime: 15
 --- !u!1001 &7996273815146320810
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13066,14 +13070,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7754f2f8685716468f181fb27a03251, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BombHazard
-  damage: 1
   destroyOnHit: 1
-  lifeTime: 15
-  fuse: 2
   explosionPrefab: {fileID: 0}
   explodeClip: {fileID: 0}
-  blastRadius: 0
-  blastDamage: 2
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -13114,3 +13113,4 @@ SceneRoots:
   - {fileID: 1116832876}
   - {fileID: 523143717}
   - {fileID: 371732895}
+  - {fileID: 79920205}

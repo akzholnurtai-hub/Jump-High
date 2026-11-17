@@ -5,6 +5,6 @@ public class WinScreen : MonoBehaviour
 {
     public void GoToMenu()
     {
-        SceneManager.LoadScene("MainMenu");
+        SceneManager.LoadScene(GameConfig.Get().menuScene);
     }
 }
