@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bda7580948ba4264a5f3c35920e1d1de, type: 3}
+  m_Name: RhinoTank
+  m_EditorClassIdentifier: 
+  displayName: Rhino-Tank
+  prefab: {fileID: 2468579977657138224, guid: 6844df02392be4d4d81ac78a757d0af6, type: 3}
+  maxHp: 6
+  damage: 1
+  killScore: 200
+  viewRange: 6.5
+  fov: 360
+  sightInterval: 0.15
+  turnSpeed: 200
+  aimTurnSpeed: 480
+  restTime: 0.3
+  windUp: 0.7
+  aimLock: 0.15
+  dashSpeed: 14
+  dashDistance: 9
+  hitRadius: 1.1
+  stunTime: 1
+  homeRadius: 3
+  returnSpeed: 1.8

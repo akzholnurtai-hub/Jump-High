@@ -1,3 +1,7 @@
+#if LEGACY_TOOLS
+// Week 11: switched off - merged into Spawner (ramp numbers are in LevelData.hazards).
+// It wrote balance numbers straight into scenes; those numbers now live in data assets (Assets/Data).
+// Safe to delete. Kept only so the history is easy to see.
 using System.Collections;
 using UnityEngine;
 
@@ -34,3 +38,4 @@ public class SpawnerRamp : MonoBehaviour
         }
     }
 }
+#endif

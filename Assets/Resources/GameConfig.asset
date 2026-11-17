@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f8f34ea47de4fe39e8eef7b4e54ffb9, type: 3}
+  m_Name: GameConfig
+  m_EditorClassIdentifier: 
+  player: {fileID: 11400000, guid: 3811c85c010d4af5b49067a0ff0d78d7, type: 2}
+  items: {fileID: 11400000, guid: dbcbd4a2aa5c4bae93f166c3d94fa503, type: 2}
+  boss: {fileID: 11400000, guid: 46ea16e413624c22a597bdd9e554c1f9, type: 2}
+  levels:
+  - {fileID: 11400000, guid: dced0bbe244a4580b44179d6977c8a00, type: 2}
+  - {fileID: 11400000, guid: 7391751a1ac84c05b1624b6f75729c89, type: 2}
+  - {fileID: 11400000, guid: 7b11715aaea648ce8f7e6119d73f96bb, type: 2}
+  - {fileID: 11400000, guid: c2558a51c6ef42628387d4d1a53517a3, type: 2}
+  menuScene: MainMenu
+  winScene: Win
+  levelEndDelay: 2.5
+  defaultSettings:
+    musicVolume: 0.5
+    musicOn: 1
+    fullscreen: 1
+    playerName: 
+    playerColor: 0

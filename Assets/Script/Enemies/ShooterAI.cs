@@ -10,14 +10,11 @@ public class ShooterAI : EnemyBase
     [SerializeField] GameObject shotPrefab;               // Fireball prefab (a Hazard)
     [SerializeField] Transform firePoint;
     [SerializeField] LineRenderer laser;                  // red aim line = the warning
-    [SerializeField] float preferredDistance = 5f;        // m
-    [SerializeField] float moveSpeed = 2.2f;              // m/s
-    [SerializeField] float leash = 5f;                    // m, never walks further than this from home
-    [SerializeField] float aimTime = 0.6f;                // s of laser before the shot
-    [SerializeField] float aimLock = 0.2f;                // s, last part of the aim does not turn: dodge works
-    [SerializeField] float shotSpeed = 7f;                // m/s (player runs 6 m/s)
-    [SerializeField] float cooldown = 1.5f;               // s after a shot: time to leave cover
-    [SerializeField] float loseTime = 1f;                 // s unseen -> Idle
+
+    const float HomeReach = 0.2f;                         // m, "back home"
+    const float MuzzleOffset = 0.8f;                      // m, if there is no firePoint
+
+    ShooterStats S => (ShooterStats)stats;
 
     State state;
     float timer;
@@ -38,32 +35,32 @@ public class ShooterAI : EnemyBase
         switch (state)
         {
             case State.Idle:
-                if (DistanceTo(home) > 0.2f)
+                if (DistanceTo(home) > HomeReach)
                 {
-                    TurnTowards(home, 240f);
-                    MoveFlat(home - transform.position, 1.5f * Time.deltaTime);
+                    TurnTowards(home, S.turnSpeed);
+                    MoveFlat(home - transform.position, S.returnSpeed * Time.deltaTime);
                 }
                 if (seesPlayer) SetState(State.KeepDistance);
                 break;
 
             case State.KeepDistance:
-                if (seesPlayer) TurnTowards(player.position, 300f);
+                if (seesPlayer) TurnTowards(player.position, S.turnSpeed);
                 KeepDistance();
                 unseen = seesPlayer ? 0f : unseen + Time.deltaTime;
-                if (unseen > loseTime) SetState(State.Idle);
-                else if (seesPlayer && timer >= 0.25f) SetState(State.Aim);
+                if (unseen > S.loseTime) SetState(State.Idle);
+                else if (seesPlayer && timer >= S.reactionTime) SetState(State.Aim);
                 break;
 
             case State.Aim:
-                if (timer < aimTime - aimLock) TurnTowards(player.position, 360f);
+                if (timer < S.aimTime - S.aimLock) TurnTowards(player.position, S.aimTurnSpeed);
                 UpdateLaser();
-                if (timer >= aimTime) { Fire(); SetState(State.Cooldown); }
+                if (timer >= S.aimTime) { Fire(); SetState(State.Cooldown); }
                 break;
 
             case State.Cooldown:
-                if (seesPlayer) TurnTowards(player.position, 300f);
+                if (seesPlayer) TurnTowards(player.position, S.turnSpeed);
                 KeepDistance();
-                if (timer >= cooldown) SetState(State.KeepDistance);
+                if (timer >= S.cooldown) SetState(State.KeepDistance);
                 break;
         }
     }
@@ -86,20 +83,20 @@ public class ShooterAI : EnemyBase
         if (!seesPlayer) return;
         float d = DistanceToPlayer();
         Vector3 toPlayer = player.position - transform.position;
-        float step = moveSpeed * Time.deltaTime;
+        float step = S.moveSpeed * Time.deltaTime;
 
-        if (d < preferredDistance - 0.5f)
+        if (d < S.preferredDistance - S.distanceSlack)
             MoveFlat(-toPlayer, step);                                     // too close: back off
-        else if (d > preferredDistance + 0.5f && DistanceTo(home) < leash)
+        else if (d > S.preferredDistance + S.distanceSlack && DistanceTo(home) < S.leash)
             MoveFlat(toPlayer, step);                                      // too far: come closer
     }
 
     void UpdateLaser()
     {
         if (laser == null) return;
-        Vector3 from = firePoint != null ? firePoint.position : transform.position + Vector3.up;
-        float len = viewRange;
-        if (Physics.Raycast(from, transform.forward, out RaycastHit hit, viewRange, obstacleMask, QueryTriggerInteraction.Ignore))
+        Vector3 from = firePoint != null ? firePoint.position : transform.position + Vector3.up * EyeHeight;
+        float len = S.viewRange;
+        if (Physics.Raycast(from, transform.forward, out RaycastHit hit, S.viewRange, obstacleMask, QueryTriggerInteraction.Ignore))
             len = hit.distance;
         laser.SetPosition(0, from);
         laser.SetPosition(1, from + transform.forward * len);
@@ -108,11 +105,11 @@ public class ShooterAI : EnemyBase
     void Fire()
     {
         if (shotPrefab == null) return;
-        Vector3 from = firePoint != null ? firePoint.position : transform.position + Vector3.up + transform.forward * 0.8f;
+        Vector3 from = firePoint != null ? firePoint.position : transform.position + Vector3.up * EyeHeight + transform.forward * MuzzleOffset;
         GameObject shot = Instantiate(shotPrefab, from, Quaternion.LookRotation(transform.forward));
 
         Fireball fb = shot.GetComponent<Fireball>();
-        if (fb != null) fb.speed = shotSpeed;           // set before its Start() runs
+        if (fb != null) fb.speed = S.shotSpeed;         // set before its Start() runs
 
         ShotStopper stop = shot.AddComponent<ShotStopper>();
         stop.walls = obstacleMask;                      // the shot does not fly through walls

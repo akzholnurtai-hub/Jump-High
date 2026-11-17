@@ -1,16 +1,23 @@
+using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
 // Shared "Sense" part for all three enemies: sight (distance -> angle -> raycast),
 // wall-aware movement, warning color, state label and gizmos.
 // Every enemy keeps its OWN enum + switch + SetState (the "Decide" part).
+// All balance numbers (HP, damage, sight, speeds, timings) are in an EnemyStats asset.
 public abstract class EnemyBase : MonoBehaviour
 {
+    // shape of the robot body, not balance
+    protected const float EyeHeight = 1f;                 // m above the feet
+    const float BodyRadius = 0.4f;                        // m, for the wall check when moving
+    const float WallGap = 0.1f;                           // m kept from walls
+
+    [Header("Data")]
+    [SerializeField] protected EnemyStats stats;          // PatrollerStats / ShooterStats / ChargerStats asset
+
     [Header("Sight")]
-    [SerializeField] protected float viewRange = 6f;      // m
-    [SerializeField] protected float fov = 90f;           // degrees, whole cone (360 = sees all around)
     [SerializeField] protected LayerMask obstacleMask;    // tick ONLY the Walls layer
-    [SerializeField] float sightInterval = 0.15f;         // s between sight checks (not every frame)
 
     [Header("Look & debug")]
     [SerializeField] protected Renderer body;             // single mesh that changes color (if no model)
@@ -23,6 +30,8 @@ public abstract class EnemyBase : MonoBehaviour
     protected Health playerHealth;
     protected bool seesPlayer;
     protected Vector3 home;
+
+    public EnemyStats Stats => stats;
 
     float sightTimer;
     Material[] mats = new Material[0];
@@ -53,9 +62,24 @@ public abstract class EnemyBase : MonoBehaviour
         home = transform.position;
         if (Camera.main != null) cam = Camera.main.transform;
 
+        if (stats == null)
+        {
+            Debug.LogError(name + ": no EnemyStats asset. Drag one into the Stats field.");
+            enabled = false;                                   // no Update without numbers
+        }
+
 #if !(UNITY_EDITOR || DEVELOPMENT_BUILD)
         if (stateLabel != null) stateLabel.gameObject.SetActive(false);   // hide the label in release
 #endif
+    }
+
+    // LevelRunner calls this right after Instantiate (after Awake, before Start).
+    // route = Patroller waypoints from the LevelData; other enemies ignore it.
+    public virtual void Init(EnemyStats data, List<Vector3> route)
+    {
+        if (data == null) return;
+        stats = data;
+        enabled = true;                                        // in case Awake had no stats
     }
 
     // ---------- Sense ----------
@@ -64,7 +88,7 @@ public abstract class EnemyBase : MonoBehaviour
     {
         sightTimer -= Time.deltaTime;
         if (sightTimer > 0f) return;
-        sightTimer = sightInterval;
+        sightTimer = stats.sightInterval;
         seesPlayer = CanSeePlayer();
     }
 
@@ -72,15 +96,15 @@ public abstract class EnemyBase : MonoBehaviour
     {
         if (player == null) return false;
 
-        Vector3 eye = transform.position + Vector3.up;           // 1 m above the feet
-        Vector3 toPlayer = player.position + Vector3.up - eye;
+        Vector3 eye = transform.position + Vector3.up * EyeHeight;
+        Vector3 toPlayer = player.position + Vector3.up * EyeHeight - eye;
 
         // 1. distance (cheap)
-        if (toPlayer.magnitude > viewRange) return false;
+        if (toPlayer.magnitude > stats.viewRange) return false;
 
         // 2. angle: inside the cone? (flat, so jumping does not hide the player)
         Vector3 flat = toPlayer; flat.y = 0f;
-        if (Vector3.Angle(transform.forward, flat) > fov / 2f) return false;
+        if (Vector3.Angle(transform.forward, flat) > stats.fov / 2f) return false;
 
         // 3. walls (expensive, last)
         if (Physics.Raycast(eye, toPlayer.normalized, toPlayer.magnitude, obstacleMask, QueryTriggerInteraction.Ignore))
@@ -119,7 +143,7 @@ public abstract class EnemyBase : MonoBehaviour
         if (dir.sqrMagnitude < 0.000001f) return false;
         dir.Normalize();
 
-        if (Physics.SphereCast(transform.position + Vector3.up, 0.4f, dir, out _, distance + 0.1f,
+        if (Physics.SphereCast(transform.position + Vector3.up * EyeHeight, BodyRadius, dir, out _, distance + WallGap,
                                obstacleMask, QueryTriggerInteraction.Ignore))
             return false;
 
@@ -129,7 +153,7 @@ public abstract class EnemyBase : MonoBehaviour
 
     protected void HitPlayer()
     {
-        if (playerHealth != null) playerHealth.TakeDamage(1);
+        if (playerHealth != null) playerHealth.TakeDamage(stats.damage);
     }
 
     // ---------- Readability ----------
@@ -162,20 +186,21 @@ public abstract class EnemyBase : MonoBehaviour
             stateLabel.transform.rotation = cam.rotation;          // 3D label faces the camera
 
         if (player != null)
-            Debug.DrawLine(transform.position + Vector3.up, player.position + Vector3.up,
+            Debug.DrawLine(transform.position + Vector3.up * EyeHeight, player.position + Vector3.up * EyeHeight,
                            seesPlayer ? Color.green : Color.red);
     }
 
     protected virtual void OnDrawGizmosSelected()
     {
+        if (stats == null) return;
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, viewRange);
+        Gizmos.DrawWireSphere(transform.position, stats.viewRange);
 
-        if (fov >= 360f) return;
-        Vector3 left = Quaternion.Euler(0f, -fov / 2f, 0f) * transform.forward;
-        Vector3 right = Quaternion.Euler(0f, fov / 2f, 0f) * transform.forward;
+        if (stats.fov >= 360f) return;
+        Vector3 left = Quaternion.Euler(0f, -stats.fov / 2f, 0f) * transform.forward;
+        Vector3 right = Quaternion.Euler(0f, stats.fov / 2f, 0f) * transform.forward;
         Gizmos.color = Color.cyan;
-        Gizmos.DrawRay(transform.position + Vector3.up, left * viewRange);
-        Gizmos.DrawRay(transform.position + Vector3.up, right * viewRange);
+        Gizmos.DrawRay(transform.position + Vector3.up * EyeHeight, left * stats.viewRange);
+        Gizmos.DrawRay(transform.position + Vector3.up * EyeHeight, right * stats.viewRange);
     }
 }
