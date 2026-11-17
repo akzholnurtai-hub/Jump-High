@@ -10,15 +10,16 @@ public class Movement : MonoBehaviour
     public Transform feet;
     public LayerMask groundMask;
     public Animator anim;
-    public float speed = 6f;
-    public float jumpForce = 7f;
-    public float turnSpeed = 12f;
+
+    const float GroundCheckRadius = 0.2f;   // m, size of the feet sphere (shape of the model, not balance)
+
+    // speed, jump and turn come from PlayerStats; time limit, coin goal and next level from LevelData
+    static PlayerStats P => GameConfig.Get().player;
 
     Transform cam;
     bool grounded;
 
     public Animator gateAnimator;
-    public float timeLimit = 30f;
 
     public TextMeshProUGUI coinText;
     public TextMeshProUGUI winText;
@@ -26,9 +27,8 @@ public class Movement : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip coinSound;
 
-    public float messageTime = 2f;
+    public float messageTime;               // s a short message stays on screen (UI, not balance)
 
-    public string nextScene = "Level2";
     public AudioClip jumpSound;
 
     private Coroutine messageRoutine;
@@ -38,8 +38,11 @@ public class Movement : MonoBehaviour
     private bool fireRequested;
     private int coinsCollected = 0;
     private int totalCoins;
+    private int coinsNeeded;
     private float timeLeft;
     private bool gameOver = false;
+
+    public float TimeLeft => timeLeft;
 
     void Awake()
     {
@@ -52,9 +55,12 @@ public class Movement : MonoBehaviour
         cam = Camera.main.transform;
 
         totalCoins = GameObject.FindGameObjectsWithTag("Coin").Length;
-        Debug.Log("Coins in this level: " + totalCoins);
 
-        timeLeft = timeLimit;
+        LevelData level = LevelRunner.CurrentLevel;
+        coinsNeeded = level != null && level.coinsRequired > 0 ? Mathf.Min(level.coinsRequired, totalCoins) : totalCoins;
+        timeLeft = level != null ? level.timeLimit : Mathf.Infinity;
+        Debug.Log("Coins in this level: " + totalCoins + ", needed: " + coinsNeeded);
+
         winText.text = "";
         ShowCoins();
     }
@@ -70,7 +76,7 @@ public class Movement : MonoBehaviour
 
         if (grounded)
         {
-            rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, rb.linearVelocity.z);
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, P.jumpForce, rb.linearVelocity.z);
 
             if (audioSource != null && jumpSound != null)
                 audioSource.PlayOneShot(jumpSound);
@@ -85,7 +91,7 @@ public class Movement : MonoBehaviour
     void Update()
     {
 
-        grounded = Physics.CheckSphere(feet.position, 0.2f, groundMask);
+        grounded = Physics.CheckSphere(feet.position, GroundCheckRadius, groundMask);
 
         Vector3 flat = rb.linearVelocity;
         flat.y = 0;
@@ -120,10 +126,12 @@ public class Movement : MonoBehaviour
         if (timeLeft <= 0)
         {
             timeLeft = 0;
+            gameOver = true;
+            SaveSystem.AddDeath();
             Restart();
         }
 
-        timerText.text = "Time: " + Mathf.CeilToInt(timeLeft);
+        timerText.text = float.IsInfinity(timeLeft) ? "" : "Time: " + Mathf.CeilToInt(timeLeft);
 
     }
 
@@ -135,11 +143,11 @@ public class Movement : MonoBehaviour
         Vector3 camR = cam.right;   camR.y = 0; camR.Normalize();
         Vector3 dir = camF * move.y + camR * move.x;
 
-        rb.linearVelocity = new Vector3(dir.x * speed, rb.linearVelocity.y, dir.z * speed);
+        rb.linearVelocity = new Vector3(dir.x * P.moveSpeed, rb.linearVelocity.y, dir.z * P.moveSpeed);
 
         if (dir.sqrMagnitude > 0.01f)
             rb.MoveRotation(Quaternion.Slerp(rb.rotation,
-                Quaternion.LookRotation(dir), turnSpeed * Time.fixedDeltaTime));
+                Quaternion.LookRotation(dir), P.turnSpeed * Time.fixedDeltaTime));
     }
 
     void OnTriggerEnter(Collider other)
@@ -152,13 +160,15 @@ public class Movement : MonoBehaviour
 
             coinsCollected++;
             ShowCoins();
+            SaveSystem.AddCoin();
+            if (LevelRunner.Current != null) LevelRunner.Current.AddScore(GameConfig.Get().items.coinScore);
 
             if (audioSource != null && coinSound != null)
                 audioSource.PlayOneShot(coinSound);
 
             Debug.Log("Coins: " + coinsCollected + " / " + totalCoins);
 
-            if (coinsCollected >= totalCoins && gateAnimator != null)
+            if (coinsCollected >= coinsNeeded && gateAnimator != null)
             {
                 gateAnimator.SetBool("Open", true);
                 Debug.Log("Gate Opened!");
@@ -167,14 +177,15 @@ public class Movement : MonoBehaviour
 
         if (other.CompareTag("Exit"))
         {
-            if (coinsCollected >= totalCoins)
+            if (coinsCollected >= coinsNeeded)
             {
-                Debug.Log("Вы выиграли!");
-                SceneManager.LoadScene(nextScene);
+                Debug.Log("Level clear!");
+                if (LevelRunner.Current != null) LevelRunner.Current.Complete();   // score, save, next level
+                else SceneManager.LoadScene(GameConfig.Get().menuScene);
             }
             else
             {
-                Debug.Log("Сначала соберите все монеты! " + coinsCollected + " / " + totalCoins);
+                Debug.Log("Collect the coins first! " + coinsCollected + " / " + coinsNeeded);
 
                 if (messageRoutine != null)
                     StopCoroutine(messageRoutine);
@@ -188,11 +199,19 @@ public class Movement : MonoBehaviour
 
     void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject.CompareTag("Enemy"))
+        if (other.gameObject.CompareTag("Enemy") && !gameOver)
         {
+            gameOver = true;
             Debug.Log("Game Over");
+            SaveSystem.AddDeath();
             Restart();
         }
+    }
+
+    // LevelRunner calls this when the level is won: stop the player and show the result.
+    public void Finish(string message)
+    {
+        EndGame(message);
     }
 
     void EndGame(string message)
@@ -210,7 +229,7 @@ public class Movement : MonoBehaviour
 
     void ShowCoins()
     {
-        coinText.text = coinsCollected + " / " + totalCoins;
+        coinText.text = coinsCollected + " / " + coinsNeeded;
     }
 
     System.Collections.IEnumerator ShowMessage(string message)
@@ -225,6 +244,6 @@ public class Movement : MonoBehaviour
 
     public void GoToMenu()
     {
-        SceneManager.LoadScene("MainMenu");
+        SceneManager.LoadScene(GameConfig.Get().menuScene);
     }
 }

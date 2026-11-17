@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,15 +9,14 @@ public class PatrollerAI : EnemyBase
 {
     enum State { Patrol, Chase, Attack }
 
+    const float RepathTime = 0.2f;                        // s, new NavMesh path 5 times per second
+    const float WaypointReach = 0.4f;                     // m, "arrived" at a waypoint
+
     [Header("Patroller")]
-    [SerializeField] Transform[] points;                  // waypoints in the level, NOT children of the enemy
-    [SerializeField] float patrolSpeed = 1.7f;            // m/s
-    [SerializeField] float chaseSpeed = 4f;               // m/s (player runs 6 m/s)
-    [SerializeField] float attackRange = 1.6f;            // m, starts the wind-up
-    [SerializeField] float hitRange = 2.2f;               // m, the strike only lands if still this close
-    [SerializeField] float windUp = 0.5f;                 // s, red warning before the hit
-    [SerializeField] float recovery = 0.6f;               // s, stands still after the hit: hit it back
-    [SerializeField] float loseTime = 2f;                 // s without seeing the player -> back to Patrol
+    [SerializeField] Transform[] points;                  // waypoints placed in a scene by hand (optional)
+
+    PatrollerStats S => (PatrollerStats)stats;
+    readonly List<Vector3> route = new List<Vector3>();   // waypoint positions used at run time
 
     State state;
     float timer;          // seconds in the current state (in Chase: since last seen)
@@ -29,10 +29,31 @@ public class PatrollerAI : EnemyBase
     protected override void Awake()
     {
         base.Awake();
+        if (stats == null) return;                        // EnemyBase already logged it
         agent = GetComponent<NavMeshAgent>();
-        agent.speed = patrolSpeed;
-        agent.angularSpeed = 360f;
-        agent.stoppingDistance = 0.1f;
+        agent.speed = S.patrolSpeed;
+        agent.angularSpeed = S.turnSpeed;
+        agent.stoppingDistance = WaypointReach / 4f;
+
+        if (points != null)
+            foreach (Transform p in points)
+                if (p != null) route.Add(p.position);
+
+        SetState(State.Patrol);
+    }
+
+    // Spawned from LevelData: waypoints come from the data, not from scene objects.
+    public override void Init(EnemyStats data, List<Vector3> waypoints)
+    {
+        base.Init(data, waypoints);
+        if (stats == null) return;
+        if (agent == null) agent = GetComponent<NavMeshAgent>();
+        if (waypoints != null && waypoints.Count > 0)
+        {
+            route.Clear();
+            route.AddRange(waypoints);
+        }
+        agent.angularSpeed = S.turnSpeed;
         SetState(State.Patrol);
     }
 
@@ -50,20 +71,20 @@ public class PatrollerAI : EnemyBase
 
             case State.Chase:
                 if (seesPlayer) { timer = 0f; lastSeen = player.position; }
-                GoTo(lastSeen, chaseSpeed);
-                if (seesPlayer && DistanceToPlayer() < attackRange) SetState(State.Attack);
-                else if (timer > loseTime) SetState(State.Patrol);
+                GoTo(lastSeen, S.chaseSpeed);
+                if (seesPlayer && DistanceToPlayer() < S.attackRange) SetState(State.Attack);
+                else if (timer > S.loseTime) SetState(State.Patrol);
                 break;
 
             case State.Attack:                                   // stands still: this is the warning
-                if (timer < windUp) TurnTowards(player.position, 360f);
+                if (timer < S.windUp) TurnTowards(player.position, S.aimTurnSpeed);
                 else if (!struck)
                 {
                     struck = true;
                     ResetTint();
-                    if (DistanceToPlayer() <= hitRange) HitPlayer();   // stepping away during wind-up works
+                    if (DistanceToPlayer() <= S.hitRange) HitPlayer();   // stepping away during wind-up works
                 }
-                if (timer >= windUp + recovery) SetState(State.Chase);
+                if (timer >= S.windUp + S.recovery) SetState(State.Chase);
                 break;
         }
     }
@@ -85,12 +106,12 @@ public class PatrollerAI : EnemyBase
 
     void Patrol()
     {
-        if (points == null || points.Length == 0) return;
-        Vector3 target = points[i].position;
-        GoTo(target, patrolSpeed);
-        if (DistanceTo(target) < 0.4f)
+        if (route.Count == 0) return;
+        Vector3 target = route[i];
+        GoTo(target, S.patrolSpeed);
+        if (DistanceTo(target) < WaypointReach)
         {
-            i = (i + 1) % points.Length;   // next point, loop to 0
+            i = (i + 1) % route.Count;     // next point, loop to 0
             repath = 0f;
         }
     }
@@ -104,12 +125,12 @@ public class PatrollerAI : EnemyBase
             agent.speed = speed;
             repath -= Time.deltaTime;
             if (repath > 0f) return;
-            repath = 0.2f;                                  // new path 5 times per second
+            repath = RepathTime;
             agent.SetDestination(target);
         }
         else
         {
-            TurnTowards(target, 360f);
+            TurnTowards(target, S.turnSpeed);
             MoveFlat(target - transform.position, speed * Time.deltaTime);
         }
     }
@@ -121,11 +142,11 @@ public class PatrollerAI : EnemyBase
 
     int NearestPoint()
     {
-        if (points == null || points.Length == 0) return 0;
+        if (route.Count == 0) return 0;
         int best = 0; float bd = Mathf.Infinity;
-        for (int k = 0; k < points.Length; k++)
+        for (int k = 0; k < route.Count; k++)
         {
-            float d = DistanceTo(points[k].position);
+            float d = DistanceTo(route[k]);
             if (d < bd) { bd = d; best = k; }
         }
         return best;
@@ -134,10 +155,8 @@ public class PatrollerAI : EnemyBase
     protected override void OnDrawGizmosSelected()
     {
         base.OnDrawGizmosSelected();
-        if (points == null) return;
         Gizmos.color = Color.white;
-        for (int k = 0; k < points.Length; k++)
-            if (points[k] != null && points[(k + 1) % points.Length] != null)
-                Gizmos.DrawLine(points[k].position, points[(k + 1) % points.Length].position);
+        for (int k = 0; k < route.Count; k++)
+            Gizmos.DrawLine(route[k], route[(k + 1) % route.Count]);
     }
 }

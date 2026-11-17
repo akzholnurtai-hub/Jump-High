@@ -1,3 +1,7 @@
+#if LEGACY_TOOLS
+// Week 11: switched off - old week 10 level builder.
+// It wrote balance numbers straight into scenes; those numbers now live in data assets (Assets/Data).
+// Safe to delete. Kept only so the history is easy to see.
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -699,3 +703,4 @@ public static class Week10Setup
         EditorSceneManager.SaveScene(sc);
     }
 }
+#endif

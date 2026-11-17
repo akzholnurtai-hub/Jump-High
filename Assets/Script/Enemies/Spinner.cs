@@ -1,10 +1,10 @@
 using UnityEngine;
 
-// Rotating low bar: jump over it. Damage comes from a Hazard on the same object.
+// Rotating low bar: jump over it. Damage comes from a Hazard on the same object,
+// turn speed from ItemValues.spinnerSpeed.
 [RequireComponent(typeof(Rigidbody))]
 public class Spinner : MonoBehaviour
 {
-    public float degPerSec = 90f;
     Rigidbody rb;
 
     void Awake()
@@ -15,6 +15,7 @@ public class Spinner : MonoBehaviour
 
     void FixedUpdate()
     {
+        float degPerSec = GameConfig.Get().items.spinnerSpeed;
         rb.MoveRotation(rb.rotation * Quaternion.Euler(0f, degPerSec * Time.fixedDeltaTime, 0f));
     }
 }

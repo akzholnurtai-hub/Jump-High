@@ -1,38 +1,35 @@
 using System.Collections;
 using UnityEngine;
 
+// The player's gun. Pattern, cooldown and bullet numbers come from PlayerStats.
 public class Shooter : MonoBehaviour
 {
     public enum Pattern { Single, Spread, Burst }
 
+    const float MuzzleOffset = 0.8f;     // m in front of the body, so the bullet does not hit the player
+
     public GameObject bulletPrefab;
-    public float cooldown = 0.3f;
     public AudioClip shootClip;
 
-    [Header("Fire pattern")]
-    public Pattern pattern = Pattern.Single;
-    public int spreadCount = 3;          // bullets in the fan
-    public float spreadAngle = 12f;      // degrees between bullets
-    public int burstCount = 3;           // bullets in a burst
-    public float burstDelay = 0.08f;     // s between burst bullets
+    static PlayerStats P => GameConfig.Get().player;
 
     float nextShot;
 
     public void Shoot(Vector3 dir)
     {
         if (Time.time < nextShot) return;
-        nextShot = Time.time + cooldown;
+        nextShot = Time.time + P.fireCooldown;
 
-        switch (pattern)
+        switch (P.firePattern)
         {
             case Pattern.Single:
                 Spawn(dir);
                 break;
 
             case Pattern.Spread:
-                float start = -spreadAngle * (spreadCount - 1) / 2f;
-                for (int i = 0; i < spreadCount; i++)
-                    Spawn(Quaternion.Euler(0f, start + spreadAngle * i, 0f) * dir);
+                float start = -P.spreadAngle * (P.spreadCount - 1) / 2f;
+                for (int i = 0; i < P.spreadCount; i++)
+                    Spawn(Quaternion.Euler(0f, start + P.spreadAngle * i, 0f) * dir);
                 break;
 
             case Pattern.Burst:
@@ -44,18 +41,24 @@ public class Shooter : MonoBehaviour
 
     IEnumerator Burst()
     {
-        for (int i = 0; i < burstCount; i++)
+        for (int i = 0; i < P.burstCount; i++)
         {
             Spawn(transform.forward);        // follows the player's turn during the burst
             PlaySound();
-            yield return new WaitForSeconds(burstDelay);
+            yield return new WaitForSeconds(P.burstDelay);
         }
     }
 
     void Spawn(Vector3 dir)
     {
-        Vector3 pos = transform.position + dir * 0.8f;
-        Instantiate(bulletPrefab, pos, Quaternion.LookRotation(dir));
+        Vector3 pos = transform.position + dir * MuzzleOffset;
+        GameObject go = Instantiate(bulletPrefab, pos, Quaternion.LookRotation(dir));
+        Bullet b = go.GetComponent<Bullet>();
+        if (b != null)
+        {
+            b.speed = P.bulletSpeed;         // set before the bullet's Start() runs
+            b.lifeTime = P.bulletLifetime;
+        }
     }
 
     void PlaySound()

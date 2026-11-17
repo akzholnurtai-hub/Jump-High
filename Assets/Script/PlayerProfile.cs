@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 
+// Shows the player name from save.json in the level HUD.
 public class PlayerProfile : MonoBehaviour
 {
     public TextMeshProUGUI nameText;
@@ -8,12 +9,12 @@ public class PlayerProfile : MonoBehaviour
 
     void Start()
     {
-        string playerName = PlayerPrefs.GetString("PlayerName", "Player");
+        string playerName = SaveSystem.Settings.playerName;
+        if (string.IsNullOrEmpty(playerName)) playerName = "Player";
 
         if (nameText != null)
         {
             nameText.text = playerName;
         }
-
     }
 }

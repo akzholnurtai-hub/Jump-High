@@ -1,40 +1,61 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+
+// Settings panel: name, color, fullscreen, music on/off.
+// Every change goes into save.json (SaveSystem) and is written a moment later.
 public class ProfileSettings : MonoBehaviour
 {
     public Toggle fullscreenToggle;
-public Toggle musicToggle;
-public AudioSource bgSound;
-
-public void SetFullscreen(bool isOn)
-{
-    Screen.fullScreen = isOn;
-    PlayerPrefs.SetInt("Fullscreen", isOn ? 1 : 0);
-}
-
-public void SetMusic(bool isOn)
-{
-    bgSound.mute = !isOn;
-    PlayerPrefs.SetInt("Music", isOn ? 1 : 0);
-}
+    public Toggle musicToggle;
+    public AudioSource bgSound;
     public TMP_InputField nameField;
+    public TMP_Dropdown colorDropdown;
+
+    void Start()
+    {
+        Show();
+        SaveSystem.Changed += Show;
+    }
+
+    void OnDestroy()
+    {
+        SaveSystem.Changed -= Show;
+    }
+
+    // put the saved values into the UI without firing onValueChanged
+    void Show()
+    {
+        SettingsData s = SaveSystem.Settings;
+        if (nameField != null) nameField.SetTextWithoutNotify(s.playerName);
+        if (colorDropdown != null) colorDropdown.SetValueWithoutNotify(s.playerColor);
+        if (fullscreenToggle != null) fullscreenToggle.SetIsOnWithoutNotify(s.fullscreen);
+        if (musicToggle != null) musicToggle.SetIsOnWithoutNotify(s.musicOn);
+    }
+
+    public void SetFullscreen(bool isOn)
+    {
+        Screen.fullScreen = isOn;
+        SaveSystem.Settings.fullscreen = isOn;
+        SaveSystem.SettingsChanged();
+    }
+
+    public void SetMusic(bool isOn)
+    {
+        SaveSystem.Settings.musicOn = isOn;
+        SaveSystem.ApplyAudio(bgSound);
+        SaveSystem.SettingsChanged();
+    }
 
     public void SaveName(string value)
     {
-        PlayerPrefs.SetString("PlayerName", value);
+        SaveSystem.Settings.playerName = value;
+        SaveSystem.SettingsChanged();
     }
-    public TMP_Dropdown colorDropdown;
 
-public void SaveColor(int index)
-{
-    PlayerPrefs.SetInt("PlayerColor", index);
-}
-void Start()
-{
-    nameField.text = PlayerPrefs.GetString("PlayerName", "");
-    colorDropdown.value = PlayerPrefs.GetInt("PlayerColor", 0);
-    fullscreenToggle.isOn = PlayerPrefs.GetInt("Fullscreen", 1) == 1;
-    musicToggle.isOn = PlayerPrefs.GetInt("Music", 1) == 1;
-}
+    public void SaveColor(int index)
+    {
+        SaveSystem.Settings.playerColor = index;
+        SaveSystem.SettingsChanged();
+    }
 }

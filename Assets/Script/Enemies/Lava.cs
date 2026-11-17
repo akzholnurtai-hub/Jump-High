@@ -1,17 +1,16 @@
 using UnityEngine;
 
-// Lava floor: hurts while you stand in it (Health's invincibility limits it to one hit per 2 s)
-// and throws the player up when they step in.
+// Lava floor: hurts while you stand in it (Health's invincibility limits the hits)
+// and throws the player up when they step in. Numbers in ItemValues.
 public class Lava : MonoBehaviour
 {
-    public int damage = 1;
-    public float bounce = 6f;           // m/s upward kick
+    static ItemValues Items => GameConfig.Get().items;
 
     void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("Player")) return;
         Rigidbody rb = other.attachedRigidbody;
-        if (rb != null) rb.linearVelocity = new Vector3(rb.linearVelocity.x, bounce, rb.linearVelocity.z);
+        if (rb != null) rb.linearVelocity = new Vector3(rb.linearVelocity.x, Items.lavaBounce, rb.linearVelocity.z);
         Hurt(other);
     }
 
@@ -23,6 +22,6 @@ public class Lava : MonoBehaviour
     void Hurt(Collider other)
     {
         Health h = other.GetComponentInParent<Health>();
-        if (h != null) h.TakeDamage(damage);
+        if (h != null) h.TakeDamage(Items.lavaDamage);
     }
 }

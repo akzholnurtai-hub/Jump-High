@@ -1,3 +1,7 @@
+#if LEGACY_TOOLS
+// Week 11: switched off - old RK2 map builder.
+// It wrote balance numbers straight into scenes; those numbers now live in data assets (Assets/Data).
+// Safe to delete. Kept only so the history is easy to see.
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -361,3 +365,4 @@ public static class RK2Maps
         EditorSceneManager.SaveScene(sc);
     }
 }
+#endif

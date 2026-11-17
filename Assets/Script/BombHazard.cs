@@ -1,14 +1,17 @@
 using UnityEngine;
 
+// Falls, waits (fuse), explodes. Numbers in ItemValues.
 public class BombHazard : Hazard
 {
-    public float fuse = 2f;
+    const float FxLifetime = 3f;         // s the explosion effect object lives (visual only)
+
     public GameObject explosionPrefab;
     public AudioClip explodeClip;
-    public float blastRadius = 0f;
-    public int blastDamage = 2;
 
     bool armed;
+
+    protected override int Damage => Items.bombDamage;
+    protected override float LifeTime => Items.pickupLifetime;
 
     protected override void OnCollisionEnter(Collision c)
     {
@@ -22,25 +25,20 @@ public class BombHazard : Hazard
         if (!armed)
         {
             armed = true;
-            Invoke(nameof(Explode), fuse);
+            Invoke(nameof(Explode), Items.bombFuse);
         }
-    }
-
-    protected override void OnHitPlayer(Health player)
-    {
-        player.TakeDamage(2);
     }
 
     void Explode()
     {
-        if (blastRadius > 0f)
+        if (Items.bombBlastRadius > 0f)
         {
-            Collider[] hits = Physics.OverlapSphere(transform.position, blastRadius);
+            Collider[] hits = Physics.OverlapSphere(transform.position, Items.bombBlastRadius);
             foreach (Collider col in hits)
             {
                 if (!col.CompareTag("Player")) continue;
                 Health h = col.GetComponentInParent<Health>();
-                if (h != null) { h.TakeDamage(blastDamage); break; }
+                if (h != null) { h.TakeDamage(Items.bombBlastDamage); break; }
             }
         }
         PlayFx();
@@ -52,7 +50,7 @@ public class BombHazard : Hazard
         if (explosionPrefab != null)
         {
             GameObject fx = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
-            Destroy(fx, 3f);
+            Destroy(fx, FxLifetime);
         }
         if (explodeClip != null)
             AudioSource.PlayClipAtPoint(explodeClip, transform.position);
