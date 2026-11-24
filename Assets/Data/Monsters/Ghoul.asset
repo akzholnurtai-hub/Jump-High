@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e53c52543394456e92c2cf9659d3120e, type: 3}
+  m_Name: Ghoul
+  m_EditorClassIdentifier: 
+  displayName: Ghoul
+  prefab: {fileID: 8951996994761251285, guid: cae000fb35b2a4d4ca5294fc012be905, type: 3}
+  maxHp: 3
+  damage: 1
+  killScore: 100
+  viewRange: 9
+  fov: 100
+  sightInterval: 0.15
+  turnSpeed: 360
+  aimTurnSpeed: 360
+  patrolSpeed: 1.7
+  chaseSpeed: 4.6
+  attackRange: 1.6
+  hitRange: 2.2
+  windUp: 0.5
+  recovery: 0.6
+  loseTime: 2
