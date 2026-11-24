@@ -29,3 +29,14 @@
 2026-11-17 The boss level had a 999 s timer. With a time bonus that would give a huge score, so `Level_04` has 300 s.
 2026-11-17 Name, music and fullscreen moved from PlayerPrefs to save.json. A name saved in an older build is lost once.
 2026-11-17 Boss fireballs flew through the pillars and hit me. The Week 10 `ShotStopper` was only added to the Shooter's shots, not the Boss's. Moved the wall check into `Fireball.cs` itself: it is destroyed on any solid object (not the player, the shooter, hazards or the floor below it), and it looks ahead every physics step so a fast ball cannot skip a thin wall.
+
+## Week 12 · Sound Pass
+
+2026-11-24 Asked Claude Code for the sound layer: one `AudioManager` with DontDestroyOnLoad, an AudioMixer (Master > Music > Soundtrack, Master > SFX) and a `SoundLibrary` asset with every clip and volume. Every level used to have its own "Music" AudioSource, so the music started again on every level load and death. The setup tool removed them; now the same track keeps playing and menu <-> level is a 1 s crossfade.
+2026-11-24 `AudioSource.PlayClipAtPoint` (enemy hit, boss hit, bomb, shot, wind-up) makes a temporary source with **no mixer group**, so these sounds would ignore the SFX slider. All of them go through `AudioManager.PlayAt` / `PlayClipAt` now, which use pooled sources in the SFX group.
+2026-11-24 My pause menu set `AudioListener.pause = true`, which stops the music too, so a Paused snapshot would never be heard. The music and UI-click sources have `ignoreListenerPause = true`: the game sounds stop, the music keeps playing quieter and muffled (Paused snapshot: Soundtrack -14 dB, lowpass 700 Hz). The mixer runs on unscaled time, otherwise the snapshot does not move while `timeScale = 0`.
+2026-11-24 The pause snapshot and the Music slider cannot use the same volume: a parameter the slider sets with `SetFloat` is no longer controlled by snapshots. So the slider is on the Music group and the snapshot is on its child group Soundtrack.
+2026-11-24 Old save files (Week 11) have no `sfxVolume`, and JsonUtility reads a missing number as 0, which would mute every sound. Added `audioVersion` to the settings: a file with version 0 gets the default SFX volume (0.8) once.
+2026-11-24 Volume is `Log10(slider) * 20` dB, 0 = -80 dB (silent, Log10(0) is minus infinity). Repeated sounds get pitch 0.92-1.08 and 2 clips where I had them (jump, hit, coin, wind-up, enemy hit); win and lose jingles keep pitch 1.
+2026-11-24 The boss fan attack had no warning at all. Added `fanWarnTime` (0.6 s) in BossStats: the boss growls first, the fireballs come 0.6 s later. The rock rain plays the wind-up sound together with the red mark.
+2026-11-24 With "Enter Play Mode Options" on, Unity does not call `sceneLoaded` for the first scene, so the menu started without music in the editor. `AudioManager.Start` now sets up the first scene too.
