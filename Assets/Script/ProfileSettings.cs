@@ -8,7 +8,6 @@ public class ProfileSettings : MonoBehaviour
 {
     public Toggle fullscreenToggle;
     public Toggle musicToggle;
-    public AudioSource bgSound;
     public TMP_InputField nameField;
     public TMP_Dropdown colorDropdown;
 
@@ -42,8 +41,7 @@ public class ProfileSettings : MonoBehaviour
 
     public void SetMusic(bool isOn)
     {
-        SaveSystem.Settings.musicOn = isOn;
-        SaveSystem.ApplyAudio(bgSound);
+        SaveSystem.Settings.musicOn = isOn;            // off = MusicVol -80 dB in the mixer
         SaveSystem.SettingsChanged();
     }
 

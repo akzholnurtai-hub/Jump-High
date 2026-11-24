@@ -17,6 +17,7 @@ public static class SaveSystem
     const string FileName = "save.json";
     const string TempName = "save.tmp";
     const string BrokenName = "save.broken.json";
+    const int AudioSettingsVersion = 1;                 // Week 12: sfxVolume added to SettingsData
 
     static SaveData data;
     static bool dirty;
@@ -195,18 +196,10 @@ public static class SaveSystem
         Changed?.Invoke();
     }
 
-    // Every level has a looping AudioSource called "Music".
+    // Music and SFX volume go to the AudioMixer (AudioManager), in decibels.
     public static void ApplyAudio()
     {
-        GameObject music = GameObject.Find("Music");
-        if (music != null && music.TryGetComponent(out AudioSource src)) ApplyAudio(src);
-    }
-
-    public static void ApplyAudio(AudioSource src)
-    {
-        if (src == null) return;
-        src.volume = Settings.musicVolume;
-        src.mute = !Settings.musicOn;
+        AudioManager.ApplyVolumes();
     }
 
     // ---------------- helpers ----------------
@@ -252,6 +245,16 @@ public static class SaveSystem
         if (float.IsNaN(s.musicVolume) || float.IsInfinity(s.musicVolume))
             s.musicVolume = cfg != null ? cfg.defaultSettings.musicVolume : 0f;
         s.musicVolume = Mathf.Clamp01(s.musicVolume);
+
+        // A save from Week 11 has no sfxVolume: JsonUtility reads it as 0, which would mute every sound.
+        // audioVersion 0 tells us the file is that old, so it gets the default SFX volume once.
+        float defaultSfx = cfg != null && cfg.defaultSettings.sfxVolume > 0f ? cfg.defaultSettings.sfxVolume : 0.8f;
+        if (s.audioVersion < AudioSettingsVersion || float.IsNaN(s.sfxVolume) || float.IsInfinity(s.sfxVolume))
+        {
+            s.sfxVolume = defaultSfx;
+            s.audioVersion = AudioSettingsVersion;
+        }
+        s.sfxVolume = Mathf.Clamp01(s.sfxVolume);
         if (s.playerName == null) s.playerName = "";
         s.playerColor = Mathf.Max(0, s.playerColor);
 

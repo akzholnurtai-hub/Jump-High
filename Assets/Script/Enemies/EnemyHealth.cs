@@ -9,9 +9,6 @@ public class EnemyHealth : MonoBehaviour
     const float SquashTime = 0.1f;                    // s
     static readonly Vector3 SquashScale = new Vector3(1.2f, 0.8f, 1.2f);
 
-    [SerializeField] AudioClip hitClip;
-    [SerializeField] AudioClip deathClip;
-
     EnemyStats stats;
     int hp;
     Vector3 baseScale;
@@ -42,12 +39,12 @@ public class EnemyHealth : MonoBehaviour
         hp--;
         if (hp <= 0)
         {
-            if (deathClip != null) AudioSource.PlayClipAtPoint(deathClip, transform.position);
+            AudioManager.PlayAt(Sfx.EnemyDeath, transform.position);
             if (stats != null && LevelRunner.Current != null) LevelRunner.Current.AddScore(stats.killScore);
             Destroy(gameObject);
             return;
         }
-        if (hitClip != null) AudioSource.PlayClipAtPoint(hitClip, transform.position);
+        AudioManager.PlayAt(Sfx.EnemyHit, transform.position);
         StopAllCoroutines();
         StartCoroutine(Squash());
     }

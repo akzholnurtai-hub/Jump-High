@@ -4,9 +4,9 @@ using UnityEngine.SceneManagement;
 
 // Main Menu (and Win screen) buttons.
 // Music volume is kept in save.json (SaveSystem), not in PlayerPrefs.
+// Week 12: the music is played by AudioManager; the volume sliders are VolumeSlider components.
 public class MenuButtons : MonoBehaviour
 {
-    public AudioSource bgSound;
     public GameObject mainMenuPanel;
     public GameObject settingsPanel;
     public GameObject helpPanel;
@@ -27,7 +27,6 @@ public class MenuButtons : MonoBehaviour
         // show the saved settings without firing the "changed" events
         SettingsData s = SaveSystem.Settings;
         if (volumeSlider != null) volumeSlider.SetValueWithoutNotify(s.musicVolume);
-        SaveSystem.ApplyAudio(bgSound);
     }
 
     void ShowOnly(GameObject panel)
@@ -39,8 +38,7 @@ public class MenuButtons : MonoBehaviour
     public void SetVolume(float value)
     {
         SaveSystem.Settings.musicVolume = value;
-        SaveSystem.ApplyAudio(bgSound);
-        SaveSystem.SettingsChanged();                // saved a moment after the slider stops
+        SaveSystem.SettingsChanged();                // -> AudioManager.ApplyVolumes (mixer, dB)                // saved a moment after the slider stops
     }
 
     // PLAY: level select (locked / unlocked from the save file)

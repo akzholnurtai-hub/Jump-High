@@ -25,6 +25,8 @@ MonoBehaviour:
   levelEndDelay: 2.5
   defaultSettings:
     musicVolume: 0.5
+    sfxVolume: 0.8
+    audioVersion: 1
     musicOn: 1
     fullscreen: 1
     playerName: 

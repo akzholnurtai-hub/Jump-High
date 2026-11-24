@@ -33,7 +33,8 @@ public class PauseMenu : MonoBehaviour
     {
         paused = true;
         Time.timeScale = 0f;
-        AudioListener.pause = true;
+        AudioListener.pause = true;          // stops game sounds; music and UI clicks ignore it
+        AudioManager.SetPaused(true);        // Paused snapshot: music quieter + lowpass
         pausePanel.SetActive(true);
     }
 
@@ -42,6 +43,7 @@ public class PauseMenu : MonoBehaviour
         paused = false;
         Time.timeScale = 1f;
         AudioListener.pause = false;
+        AudioManager.SetPaused(false);
         pausePanel.SetActive(false);
     }
 

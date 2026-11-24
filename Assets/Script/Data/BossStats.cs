@@ -17,6 +17,8 @@ public class BossStats : ScriptableObject
     public int fanCountPhase2;
     [Tooltip("degrees between fireballs")] public float fanAngleStep;
     [Tooltip("s after the fan")] public float fanRecover;
+    [Tooltip("s between the wind-up sound and the fan (Week 12: hear the attack before it comes)")]
+    public float fanWarnTime = 0.6f;
     [Tooltip("m/s")] public float fireballSpeed;
 
     [Header("Rock rain")]

@@ -98,6 +98,7 @@ public class LevelRunner : MonoBehaviour
         Score += level.clearBonus + Mathf.CeilToInt(timeLeft) * level.timeBonusPerSecond;
 
         bool newBest = SaveSystem.CompleteLevel(level, Score, level.timeLimit - timeLeft);
+        AudioManager.Play(Sfx.Win);
 
         string text = "LEVEL CLEAR!\nScore " + Score + (newBest ? "   NEW BEST!" : "   Best " + SaveSystem.BestScore(level.levelNumber));
         if (player != null) player.Finish(text);

@@ -9,7 +9,6 @@ public class Shooter : MonoBehaviour
     const float MuzzleOffset = 0.8f;     // m in front of the body, so the bullet does not hit the player
 
     public GameObject bulletPrefab;
-    public AudioClip shootClip;
 
     static PlayerStats P => GameConfig.Get().player;
 
@@ -63,6 +62,6 @@ public class Shooter : MonoBehaviour
 
     void PlaySound()
     {
-        if (shootClip != null) AudioSource.PlayClipAtPoint(shootClip, transform.position);
+        AudioManager.Play(Sfx.Shoot);        // random pitch: a burst does not sound like one sample x3
     }
 }

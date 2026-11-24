@@ -24,7 +24,6 @@ public abstract class EnemyBase : MonoBehaviour
     [SerializeField] protected Transform model;           // robot model: ALL its meshes change color
     [SerializeField] protected Color warnColor = new Color(1f, 0.15f, 0.1f);
     [SerializeField] protected TMP_Text stateLabel;       // 3D TextMeshPro above the head
-    [SerializeField] protected AudioClip warnClip;        // sound at the start of a wind-up
 
     protected Transform player;
     protected Health playerHealth;
@@ -170,9 +169,11 @@ public abstract class EnemyBase : MonoBehaviour
 
     protected void SetWarning(bool on) { if (on) SetTint(warnColor); else ResetTint(); }
 
+    // Wind-up sound at the START of the wind-up, so the player hears the attack before it lands.
+    // 3D: louder when the enemy is close, and from its side.
     protected void PlayWarn()
     {
-        if (warnClip != null) AudioSource.PlayClipAtPoint(warnClip, transform.position);
+        AudioManager.PlayAt(Sfx.EnemyWindUp, transform.position);
     }
 
     protected void ShowState(string s)

@@ -24,12 +24,8 @@ public class Movement : MonoBehaviour
     public TextMeshProUGUI coinText;
     public TextMeshProUGUI winText;
     public TextMeshProUGUI timerText;
-    public AudioSource audioSource;
-    public AudioClip coinSound;
 
     public float messageTime;               // s a short message stays on screen (UI, not balance)
-
-    public AudioClip jumpSound;
 
     private Coroutine messageRoutine;
     private Rigidbody rb;
@@ -77,9 +73,7 @@ public class Movement : MonoBehaviour
         if (grounded)
         {
             rb.linearVelocity = new Vector3(rb.linearVelocity.x, P.jumpForce, rb.linearVelocity.z);
-
-            if (audioSource != null && jumpSound != null)
-                audioSource.PlayOneShot(jumpSound);
+            AudioManager.Play(Sfx.Jump);
         }
     }
 
@@ -128,6 +122,7 @@ public class Movement : MonoBehaviour
             timeLeft = 0;
             gameOver = true;
             SaveSystem.AddDeath();
+            AudioManager.Play(Sfx.Lose);         // time is up
             Restart();
         }
 
@@ -163,8 +158,7 @@ public class Movement : MonoBehaviour
             SaveSystem.AddCoin();
             if (LevelRunner.Current != null) LevelRunner.Current.AddScore(GameConfig.Get().items.coinScore);
 
-            if (audioSource != null && coinSound != null)
-                audioSource.PlayOneShot(coinSound);
+            AudioManager.Play(Sfx.Pickup);
 
             Debug.Log("Coins: " + coinsCollected + " / " + totalCoins);
 
@@ -204,6 +198,7 @@ public class Movement : MonoBehaviour
             gameOver = true;
             Debug.Log("Game Over");
             SaveSystem.AddDeath();
+            AudioManager.Play(Sfx.Lose);
             Restart();
         }
     }

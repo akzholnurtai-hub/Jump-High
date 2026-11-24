@@ -13,7 +13,6 @@ public class Boss : MonoBehaviour
     public GameObject warningPrefab;
     public GameObject rockPrefab;
     public float groundY;                // world Y of the arena floor (map layout)
-    public AudioClip hitClip;
     public Animator anim;
 
     static BossStats S => GameConfig.Get().boss;
@@ -66,6 +65,10 @@ public class Boss : MonoBehaviour
 
     IEnumerator FanAttack()
     {
+        // wind-up: a low growl first, the fireballs come fanWarnTime later
+        AudioManager.PlayAt(Sfx.BossWindUp, transform.position);
+        yield return new WaitForSeconds(S.fanWarnTime);
+
         int count = SecondPhase() ? S.fanCountPhase2 : S.fanCount;
         float step = S.fanAngleStep;
         float start = -step * (count - 1) / 2f;
@@ -85,6 +88,7 @@ public class Boss : MonoBehaviour
         Vector3 pos = new Vector3(player.position.x, groundY, player.position.z);
 
         GameObject mark = Instantiate(warningPrefab, pos, Quaternion.identity);
+        AudioManager.PlayAt(Sfx.EnemyWindUp, pos);          // the red mark and the sound come together
         yield return new WaitForSeconds(S.rainWarnTime);
         Destroy(mark);
 
@@ -100,12 +104,10 @@ public class Boss : MonoBehaviour
         hp--;
         hpBar.value = hp;
 
-        if (hitClip != null)
-            AudioSource.PlayClipAtPoint(hitClip, transform.position);
-
         if (hp <= 0)
         {
             dead = true;
+            AudioManager.PlayAt(Sfx.EnemyDeath, transform.position);
             StopAllCoroutines();
             if (LevelRunner.Current != null)
             {
@@ -113,6 +115,8 @@ public class Boss : MonoBehaviour
                 LevelRunner.Current.Complete();      // score, save, then the Win scene
             }
             else UnityEngine.SceneManagement.SceneManager.LoadScene(GameConfig.Get().winScene);
+            return;
         }
+        AudioManager.PlayAt(Sfx.EnemyHit, transform.position);
     }
 }

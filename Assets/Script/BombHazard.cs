@@ -53,6 +53,6 @@ public class BombHazard : Hazard
             Destroy(fx, FxLifetime);
         }
         if (explodeClip != null)
-            AudioSource.PlayClipAtPoint(explodeClip, transform.position);
+            AudioManager.PlayClipAt(explodeClip, transform.position);     // through the SFX group
     }
 }

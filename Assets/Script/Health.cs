@@ -10,13 +10,9 @@ public class Health : MonoBehaviour
 
     static PlayerStats P => GameConfig.Get().player;
 
-    public AudioClip hurtClip;
-    public AudioClip healClip;
-
     bool invincible;
     bool dead;
     Renderer[] renderers;
-    AudioSource src;
     HUD hud;
 
     void Start()
@@ -24,7 +20,6 @@ public class Health : MonoBehaviour
         hp = MaxHp;
 
         renderers = GetComponentsInChildren<Renderer>();
-        src = GetComponent<AudioSource>();
 
         hud = FindAnyObjectByType<HUD>();
         if (hud != null) hud.SetHearts(hp);
@@ -46,7 +41,7 @@ public class Health : MonoBehaviour
         hp -= dmg;
         if (hp < 0) hp = 0;
         Debug.Log("OUCH! HP: " + hp);
-        if (src != null && hurtClip != null) src.PlayOneShot(hurtClip);
+        AudioManager.Play(Sfx.Hurt);
 
         if (hud != null) hud.SetHearts(hp);
 
@@ -62,7 +57,7 @@ public class Health : MonoBehaviour
     {
         hp = Mathf.Min(hp + amount, MaxHp);
         Debug.Log("HEAL! HP: " + hp);
-        if (src != null && healClip != null) src.PlayOneShot(healClip);
+        AudioManager.Play(Sfx.Heal);
 
         if (hud != null) hud.SetHearts(hp);
     }
@@ -96,6 +91,7 @@ public class Health : MonoBehaviour
         dead = true;
         Debug.Log("GAME OVER");
         SaveSystem.AddDeath();
+        AudioManager.Play(Sfx.Lose);    // AudioManager lives between scenes, so the reload does not cut it
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

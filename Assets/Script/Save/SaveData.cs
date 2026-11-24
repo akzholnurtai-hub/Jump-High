@@ -28,7 +28,9 @@ public class LevelRecord
 [Serializable]
 public class SettingsData
 {
-    public float musicVolume;                                   // 0..1
+    public float musicVolume;                                   // 0..1 (slider), the mixer gets Log10 x 20 dB
+    public float sfxVolume;                                     // 0..1 (slider), Week 12
+    public int audioVersion;                                    // 0 = save from before Week 12 (no sfxVolume yet)
     public bool musicOn;
     public bool fullscreen;
     public string playerName;
