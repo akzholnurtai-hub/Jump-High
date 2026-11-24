@@ -50,6 +50,19 @@ SaveSystem ── save.json in Application.persistentDataPath
 - **Save:** after a level, after Reset, when settings change, and on `OnApplicationPause(true)`.
 - I use **JsonUtility**, not BinaryFormatter. Lists instead of Dictionary, because JsonUtility cannot save a Dictionary.
 
+## Monster stages
+
+```
+MonsterStagesSetup (editor tool) ── builds Stage1-5 scenes, Data/Stages, Data/Monsters, Prefabs/Monsters
+LevelRunner ── spawns the monsters from LevelData, counts MonstersLeft ── event MonstersChanged
+ ├── EnemyHealth (monster dies) ── MonsterKilled() ── falls over, sinks, is destroyed
+ ├── Movement ── HUD "Monsters N", the Exit works only when ExitOpen
+ └── ExitGate ── door slides up when ExitOpen
+ToxicZone ── Health.TakeDamage while the player stands in it
+Spawner (follow = player) ── falling debris around the player
+FlickerLight ── broken lamps
+```
+
 ## 4. Sound (Week 12)
 
 ```

@@ -1,31 +1,44 @@
-# Video script — Assignment 12 · Sound Pass (2–3 min)
+# Video script: Assignment 12 (≈ 2 min)
 
-Record with **game sound on** and your voice. English. A file (MP4), not a link.
+Game sound on, your voice, English, MP4 file.
+Ойын дыбысы қосулы, өз дауысыңыз, ағылшынша, MP4 файл.
 
-## 1. Intro (~10 s)
-"Hi, this is Jump High. This week I added a full sound layer: a mixer, twelve sound events, two music tracks and saved volume settings."
-> Көрсету: Main Menu, мәзір музыкасы естіліп тұр.
+---
 
-## 2. The mixer (~20 s)
-"This is my AudioMixer. Master has two groups: Music and SFX. Music has a child group, Soundtrack, which the Paused snapshot changes. The sliders control Music and SFX, the pause controls Soundtrack, so they never fight."
-> Көрсету: Window → Audio → Audio Mixer, Normal / Paused snapshot-тарды ауыстырып көрсету.
+**1. Intro** ▶ Main Menu
+**EN:** Hi, this is my game Jump High. This week I added sound: a mixer, 12 sound events, 2 music tracks and saved volume.
+**KZ:** Сәлем, бұл менің Jump High ойыным. Осы аптада дыбыс қостым: микшер, 12 дыбыс, 2 музыка және сақталатын дыбыс деңгейі.
 
-## 3. The events (~40 s)
-"Every action has a sound: button click... jump... coin... I get hit... heart... shooting... enemy hit... enemy death. Jump, hit and coin have two clips and a random pitch, so they don't sound the same every time."
-> Көрсету: мәзірде батырма басу, Level 1-де секіру, монета, тұзаққа тию, ату. Level 2-де жауды өлтіру.
+**2. Mixer** ▶ Audio Mixer терезесі, Normal → Paused басу
+**EN:** My mixer has Master, Music and SFX. Every sound goes through it. The Paused snapshot makes the music quieter and muffled.
+**KZ:** Микшерімде Master, Music және SFX бар. Әр дыбыс солар арқылы өтеді. Paused снапшоты музыканы ақырын әрі күңгірт қылады.
 
-## 4. Ears test (~25 s)
-"Now the ears test. The Rhino-Tank is behind me, I can't see it... I hear the wind-up... I step aside, and the dash misses. The boss growls before every fireball fan."
-> Көрсету: камераны жаудан бұрып тұрып, wind-up дыбысын естіп, қашу. Сосын босс.
+**3. Sounds** ▶ батырма, секіру, монета, ату, монстр құлайды, монстр ұрады, шығу есігі
+**EN:** Click, jump, coin, shoot, hit, the monster dies. A monster hits me. I reach the exit: win. Repeated sounds change pitch a little.
+**KZ:** Басу, секіру, монета, ату, соққы, монстр өледі. Монстр мені ұрады. Шығуға жеттім: жеңіс. Қайталанатын дыбыстардың биіктігі сәл өзгереді.
 
-## 5. Crossfade and pause (~20 s)
-"Menu music and level music crossfade in one second, no click. When I die, the level reloads but the music doesn't restart. Pause: the game sounds stop and the music gets quiet and muffled."
-> Көрсету: Play → деңгей; өліп қайта бастау; II батырмасы → пауза → Resume.
+**4. Ears test** ▶ камераны бұрып, Brute-тың дыбысын естіп, қашу
+**EN:** I can't see the monster, but I hear its wind-up sound, so I jump away before it hits me.
+**KZ:** Монстрды көрмеймін, бірақ wind-up дыбысын естимін, сондықтан ол тимей тұрып қашып үлгеремін.
 
-## 6. Settings test on the phone (~25 s)
-"Settings: the sliders show decibels: half the slider is minus 6 dB. I set SFX low and music high... now I close the app completely... and open it again. The volume is the same."
-> Көрсету: телефонда Settings, слайдерлер, қолданбаны толық жабу (recent apps → swipe), қайта ашу.
+**5. Crossfade + pause** ▶ Menu → Play, сосын II → Resume
+**EN:** Menu and level music change smoothly. Pause: the music gets quiet and muffled.
+**KZ:** Мәзір мен деңгей музыкасы жұмсақ ауысады. Пауза: музыка ақырын әрі күңгірт болады.
 
-## 7. Script map (~30 s)
-"Scripts never hold sound clips. They only say what happened, like AudioManager.Play(Sfx.Jump). The SoundLibrary asset says how it sounds. AudioManager is one object that lives between scenes, so the music doesn't restart and a death sound isn't cut. The volume slider saves into my save file, and AudioManager sends it to the mixer in decibels: Log10 of the value times 20."
-> Көрсету: `ScriptMap.md` → "4. Sound" бөлімі, `SoundLibrary.asset` Inspector-да.
+**6. Settings test (phone)** ▶ слайдерлер → қолданбаны толық жабу → қайта ашу
+**EN:** I change the volume, close the app and open it again. The volume is the same.
+**KZ:** Дыбыс деңгейін өзгертемін, қолданбаны жабамын, қайта ашамын. Дыбыс деңгейі сол күйі.
+
+**7. Script map** ▶ `ScriptMap_Week12.png` суретін ашып, айтқан жеріңізді тышқанмен көрсетіп отырыңыз
+**EN:** This is my script map. At the top are my game scripts: Movement, Health, Shooter, the monsters, LevelRunner and the buttons. They only tell the AudioManager what happened, for example Play Jump.
+**KZ:** Бұл менің скрипт картам. Жоғарыда ойын скрипттері: Movement, Health, Shooter, монстрлар, LevelRunner және батырмалар. Олар AudioManager-ге тек не болғанын айтады, мысалы Play Jump.
+
+**EN:** The AudioManager is in the middle. There is only one for the whole game, so the music does not restart on a new level. It takes the sound from the SoundLibrary and plays it through the mixer.
+**KZ:** Ортада AudioManager. Ол бүкіл ойынға біреу ғана, сондықтан жаңа деңгейде музыка басынан басталмайды. Ол дыбысты SoundLibrary-ден алып, микшер арқылы ойнатады.
+
+**EN:** At the bottom: the volume slider saves the value in my save file, and the AudioManager sends it to the mixer in decibels. The pause button calls SetPaused, which turns on the Paused snapshot.
+**KZ:** Төменде: дыбыс слайдері мәнді сақтау файлына жазады, ал AudioManager оны микшерге децибелмен жібереді. Пауза батырмасы SetPaused-ты шақырады, ол Paused снапшотын қосады.
+
+**8. End** ▶ README → дыбыс лицензиялары
+**EN:** Sound sources are in the README. Thank you!
+**KZ:** Дыбыстардың дереккөзі README-де. Рақмет!
