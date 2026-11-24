@@ -16,10 +16,11 @@ MonoBehaviour:
   items: {fileID: 11400000, guid: dbcbd4a2aa5c4bae93f166c3d94fa503, type: 2}
   boss: {fileID: 11400000, guid: 46ea16e413624c22a597bdd9e554c1f9, type: 2}
   levels:
-  - {fileID: 11400000, guid: dced0bbe244a4580b44179d6977c8a00, type: 2}
-  - {fileID: 11400000, guid: 7391751a1ac84c05b1624b6f75729c89, type: 2}
-  - {fileID: 11400000, guid: 7b11715aaea648ce8f7e6119d73f96bb, type: 2}
-  - {fileID: 11400000, guid: c2558a51c6ef42628387d4d1a53517a3, type: 2}
+  - {fileID: 11400000, guid: 959c63979261f42439f1c9eb9c6bed97, type: 2}
+  - {fileID: 11400000, guid: 39c0bf923e002dc4a96f80e6cd0c20c1, type: 2}
+  - {fileID: 11400000, guid: 9671c9c726a92ed4e8e7822f2ed0e63c, type: 2}
+  - {fileID: 11400000, guid: 3a470e4d8625f06438be63a5ebee1f9a, type: 2}
+  - {fileID: 11400000, guid: 3514926b9a3e48a4a97cf87a4b301e42, type: 2}
   menuScene: MainMenu
   winScene: Win
   levelEndDelay: 2.5
