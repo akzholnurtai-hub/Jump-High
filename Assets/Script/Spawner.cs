@@ -6,6 +6,8 @@ using UnityEngine;
 public class Spawner : MonoBehaviour
 {
     public Hazard[] prefabs;
+    [Tooltip("empty = drops around the Spawner; the player = drops around the player (ceiling falling in)")]
+    public Transform follow;
 
     IEnumerator Start()
     {
@@ -21,10 +23,11 @@ public class Spawner : MonoBehaviour
         while (true)
         {
             Hazard pick = prefabs[Random.Range(0, prefabs.Length)];
+            Vector3 c = follow != null ? follow.position : transform.position;
             Vector3 pos = new Vector3(
-                transform.position.x + Random.Range(-w.area.x, w.area.x),
+                c.x + Random.Range(-w.area.x, w.area.x),
                 w.height,
-                transform.position.z + Random.Range(-w.area.y, w.area.y));
+                c.z + Random.Range(-w.area.y, w.area.y));
             Instantiate(pick, pos, Quaternion.identity);
 
             if (Time.time >= nextRamp)                       // the rain gets faster over time

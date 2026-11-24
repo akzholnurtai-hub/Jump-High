@@ -167,6 +167,14 @@ public abstract class EnemyBase : MonoBehaviour
         for (int i = 0; i < mats.Length; i++) mats[i].color = baseColors[i];
     }
 
+    // EnemyHealth calls this when the monster is killed: no more sight, moves or hits.
+    public void Die()
+    {
+        enabled = false;
+        SetTint(Color.black);
+        if (stateLabel != null) stateLabel.gameObject.SetActive(false);
+    }
+
     protected void SetWarning(bool on) { if (on) SetTint(warnColor); else ResetTint(); }
 
     // Wind-up sound at the START of the wind-up, so the player hears the attack before it lands.

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum LevelGoal { CollectCoins, DefeatBoss }
+public enum LevelGoal { CollectCoins, DefeatBoss, KillAllMonsters }   // new values only at the end (saved as numbers)
 
 // One asset = one level. LevelRunner reads it when the scene starts:
 // time limit, goal, score rules, which enemies to spawn and where, falling hazards.

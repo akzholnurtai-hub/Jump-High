@@ -17,7 +17,8 @@ public static class SaveSystem
     const string FileName = "save.json";
     const string TempName = "save.tmp";
     const string BrokenName = "save.broken.json";
-    const int AudioSettingsVersion = 1;                 // Week 12: sfxVolume added to SettingsData
+    const int AudioSettingsVersion = 1;
+    const int Campaign = 2;                             // monster stages replaced the old levels                 // Week 12: sfxVolume added to SettingsData
 
     static SaveData data;
     static bool dirty;
@@ -207,7 +208,7 @@ public static class SaveSystem
     static SaveData NewSave()
     {
         GameConfig cfg = GameConfig.Get();
-        SaveData d = new SaveData { version = Version };
+        SaveData d = new SaveData { version = Version, campaign = Campaign };
         if (cfg != null)
         {
             d.settings = cfg.defaultSettings.Copy();
@@ -224,6 +225,16 @@ public static class SaveSystem
         if (d.unlocked == null) d.unlocked = new List<int>();
         if (d.records == null) d.records = new List<LevelRecord>();
         if (d.settings == null) d.settings = cfg != null ? cfg.defaultSettings.Copy() : new SettingsData();
+
+        // The levels are new (monster stages), so old unlocks and best scores mean nothing: start them over.
+        // Settings, coins and deaths are kept.
+        if (d.campaign < Campaign)
+        {
+            d.unlocked.Clear();
+            d.records.Clear();
+            d.lastLevel = 0;
+            d.campaign = Campaign;
+        }
 
         List<int> clean = new List<int>();
         foreach (int n in d.unlocked)

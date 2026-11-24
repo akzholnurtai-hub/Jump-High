@@ -7,6 +7,7 @@ using System.Collections.Generic;
 public class SaveData
 {
     public int version;
+    public int campaign;                                        // 2 = the monster stages (old level progress is reset once)
     public List<int> unlocked = new List<int>();               // level numbers the player may start
     public List<LevelRecord> records = new List<LevelRecord>();
     public int bestScore;                                       // sum of the best score of every level

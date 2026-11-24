@@ -33,6 +33,7 @@ public class Boss : MonoBehaviour
 
     void Update()
     {
+        if (dead) return;
         Vector3 look = player.position - transform.position;
         look.y = 0;
         if (look.sqrMagnitude > 0.01f)
@@ -47,6 +48,32 @@ public class Boss : MonoBehaviour
     float Pause()
     {
         return SecondPhase() ? S.pause * S.phase2PauseScale : S.pause;
+    }
+
+    // The boss falls over backwards like the other monsters, then the level is won.
+    IEnumerator FallThenWin()
+    {
+        const float FallTime = 0.8f, LieTime = 0.8f;
+        if (anim != null) anim.enabled = false;
+        foreach (Hazard h in GetComponents<Hazard>()) h.enabled = false;
+
+        Quaternion start = transform.rotation;
+        Quaternion end = Quaternion.AngleAxis(-90f, transform.right) * start;
+        for (float t = 0f; t < FallTime; t += Time.deltaTime)
+        {
+            float k = t / FallTime;
+            transform.rotation = Quaternion.Slerp(start, end, k * k);
+            yield return null;
+        }
+        transform.rotation = end;
+        yield return new WaitForSeconds(LieTime);
+
+        if (LevelRunner.Current != null)
+        {
+            LevelRunner.Current.AddScore(S.killScore);
+            LevelRunner.Current.Complete();      // score, save, then the Win scene
+        }
+        else UnityEngine.SceneManagement.SceneManager.LoadScene(GameConfig.Get().winScene);
     }
 
     IEnumerator AttackLoop()
@@ -109,12 +136,7 @@ public class Boss : MonoBehaviour
             dead = true;
             AudioManager.PlayAt(Sfx.EnemyDeath, transform.position);
             StopAllCoroutines();
-            if (LevelRunner.Current != null)
-            {
-                LevelRunner.Current.AddScore(S.killScore);
-                LevelRunner.Current.Complete();      // score, save, then the Win scene
-            }
-            else UnityEngine.SceneManagement.SceneManager.LoadScene(GameConfig.Get().winScene);
+            StartCoroutine(FallThenWin());
             return;
         }
         AudioManager.PlayAt(Sfx.EnemyHit, transform.position);

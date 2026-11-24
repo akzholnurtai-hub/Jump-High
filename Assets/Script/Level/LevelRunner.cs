@@ -19,6 +19,12 @@ public class LevelRunner : MonoBehaviour
     public LevelData Level => level;
     public int Score { get; private set; }
 
+    // KillAllMonsters goal: the exit opens when every spawned monster is dead.
+    public int MonstersLeft { get; private set; }
+    public bool ExitOpen => level == null || level.goal != LevelGoal.KillAllMonsters || (spawned && MonstersLeft <= 0);
+    public static event System.Action MonstersChanged;      // Movement (HUD text) and ExitGate listen
+    bool spawned;
+
     Movement player;
     HUD hud;
     bool finished;
@@ -49,6 +55,10 @@ public class LevelRunner : MonoBehaviour
         if (Current == this) Current = null;
     }
 
+    // "Enter Play Mode Options" keeps statics between Play sessions: forget old listeners.
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    static void ResetStatics() { MonstersChanged = null; }
+
     IEnumerator Start()
     {
         player = FindAnyObjectByType<Movement>();
@@ -75,12 +85,27 @@ public class LevelRunner : MonoBehaviour
             go.name = s.type.displayName;
             EnemyBase enemy = go.GetComponent<EnemyBase>();
             if (enemy != null) enemy.Init(s.type, s.route);
+            if (go.GetComponent<EnemyHealth>() != null) MonstersLeft++;
         }
+        spawned = true;
+        MonstersChanged?.Invoke();
+    }
+
+    // EnemyHealth calls this once when a monster dies.
+    public void MonsterKilled()
+    {
+        if (MonstersLeft <= 0) return;
+        MonstersLeft--;
+        MonstersChanged?.Invoke();
+        if (MonstersLeft == 0 && level != null && level.goal == LevelGoal.KillAllMonsters && !finished && hud != null)
+            hud.ShowMessage("All monsters down! Run to the exit!");
     }
 
     string GoalText()
     {
-        return level.goal == LevelGoal.DefeatBoss ? "Defeat the boss!" : "Collect the coins!";
+        if (level.goal == LevelGoal.DefeatBoss) return "Defeat the boss!";
+        if (level.goal == LevelGoal.KillAllMonsters) return "Kill all monsters, then reach the exit!";
+        return "Collect the coins!";
     }
 
     public void AddScore(int points)

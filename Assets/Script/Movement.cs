@@ -54,6 +54,8 @@ public class Movement : MonoBehaviour
 
         LevelData level = LevelRunner.CurrentLevel;
         coinsNeeded = level != null && level.coinsRequired > 0 ? Mathf.Min(level.coinsRequired, totalCoins) : totalCoins;
+        if (level != null && level.goal == LevelGoal.KillAllMonsters) coinsNeeded = 0;   // coins are only score here
+        LevelRunner.MonstersChanged += ShowCoins;
         timeLeft = level != null ? level.timeLimit : Mathf.Infinity;
         Debug.Log("Coins in this level: " + totalCoins + ", needed: " + coinsNeeded);
 
@@ -171,7 +173,13 @@ public class Movement : MonoBehaviour
 
         if (other.CompareTag("Exit"))
         {
-            if (coinsCollected >= coinsNeeded)
+            LevelRunner runner = LevelRunner.Current;
+            if (runner != null && !runner.ExitOpen)
+            {
+                if (messageRoutine != null) StopCoroutine(messageRoutine);
+                messageRoutine = StartCoroutine(ShowMessage("Kill all monsters first! " + runner.MonstersLeft + " left"));
+            }
+            else if (coinsCollected >= coinsNeeded)
             {
                 Debug.Log("Level clear!");
                 if (LevelRunner.Current != null) LevelRunner.Current.Complete();   // score, save, next level
@@ -224,7 +232,16 @@ public class Movement : MonoBehaviour
 
     void ShowCoins()
     {
-        coinText.text = coinsCollected + " / " + coinsNeeded;
+        LevelRunner runner = LevelRunner.Current;
+        if (runner != null && runner.Level != null && runner.Level.goal != LevelGoal.CollectCoins)
+            coinText.text = runner.MonstersLeft.ToString();      // next to the skull icon: monsters left
+        else
+            coinText.text = coinsCollected + " / " + coinsNeeded;
+    }
+
+    void OnDestroy()
+    {
+        LevelRunner.MonstersChanged -= ShowCoins;
     }
 
     System.Collections.IEnumerator ShowMessage(string message)
